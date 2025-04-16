@@ -1,9 +1,7 @@
-
-// Hook for server-side fetching of individual post
 import { useQuery } from '@tanstack/react-query';
 import { fetchPost, fetchPostComments, fetchUser } from '@/lib/api';
-import { useAtom, useAtomValue } from 'jotai';
-import { entitiesAtom } from '@/store/atoms';
+import { useAtom } from 'jotai';
+import { postAtom } from '@/store/atoms';
 import { useEffect } from 'react';
 
 // Query key factories
@@ -12,7 +10,7 @@ export const postCommentsQueryKey = (id: number) => ['post', id, 'comments'];
 export const userQueryKey = (id: number) => ['user', id];
 
 export const useServerPost = (postId: number, initialData?: any) => {
-  const [entities, setEntities] = useAtom(entitiesAtom);
+  const [entities, setEntities] = useAtom(postAtom);
   
   // Check if post already exists in our store
   const existingPost = entities.posts[postId];

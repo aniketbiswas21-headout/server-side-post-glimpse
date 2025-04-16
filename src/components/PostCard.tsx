@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { useAtomValue } from 'jotai';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { entitiesAtom } from '@/store/atoms';
+import { postAtom } from '@/store/atoms';
 import { Post, User } from '@/types';
 
 interface PostCardProps {
@@ -13,7 +12,7 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ postId }) => {
-  const entities = useAtomValue(entitiesAtom);
+  const entities = useAtomValue(postAtom);
   const post = entities.posts[postId] as Post | undefined;
   const user = post?.userId ? entities.users[post.userId] as User | undefined : undefined;
 

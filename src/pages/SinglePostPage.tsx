@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import { entitiesAtom } from '@/store/atoms';
+import { postAtom } from '@/store/atoms';
 import { 
   Card, 
   CardContent, 
@@ -20,7 +19,7 @@ import PostComment from '@/components/PostComment';
 const SinglePostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const postId = parseInt(id || '0', 10);
-  const entities = useAtomValue(entitiesAtom);
+  const entities = useAtomValue(postAtom);
   
   // Get the post from our normalized state
   const post = postId ? entities.posts[postId] : undefined;
