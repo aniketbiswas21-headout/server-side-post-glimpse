@@ -1,7 +1,8 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { fetchPost, fetchPostComments, fetchUser } from '@/lib/api';
 import { useAtom } from 'jotai';
-import { postAtom } from '@/store/atoms';
+import { postsAtom, usersAtom, commentsAtom } from '@/store/atoms';
 import { useEffect } from 'react';
 
 // Query key factories
@@ -10,10 +11,12 @@ export const postCommentsQueryKey = (id: number) => ['post', id, 'comments'];
 export const userQueryKey = (id: number) => ['user', id];
 
 export const useServerPost = (postId: number, initialData?: any) => {
-  const [entities, setEntities] = useAtom(postAtom);
+  const [posts, setPosts] = useAtom(postsAtom);
+  const [users, setUsers] = useAtom(usersAtom);
+  const [comments, setComments] = useAtom(commentsAtom);
   
   // Check if post already exists in our store
-  const existingPost = entities.posts[postId];
+  const existingPost = posts[postId];
 
   // Query for fetching post
   const postQuery = useQuery({
@@ -40,29 +43,23 @@ export const useServerPost = (postId: number, initialData?: any) => {
     queryKey: userQueryKey(post?.userId),
     queryFn: () => fetchUser(post?.userId),
     initialData: initialData?.user || 
-      (post?.userId ? entities.users[post.userId] : undefined),
-    enabled: !!post?.userId && !entities.users[post.userId],
+      (post?.userId ? users[post.userId] : undefined),
+    enabled: !!post?.userId && !users[post.userId],
   });
 
   // Effect to update entities
   useEffect(() => {
-    if (post && !entities.posts[postId]) {
-      setEntities((prev) => ({
+    if (post && !posts[postId]) {
+      setPosts((prev) => ({
         ...prev,
-        posts: { 
-          ...prev.posts, 
-          [postId]: post 
-        }
+        [postId]: post
       }));
     }
 
     if (userQuery.data) {
-      setEntities((prev) => ({
+      setUsers((prev) => ({
         ...prev,
-        users: { 
-          ...prev.users, 
-          [userQuery.data.id]: userQuery.data 
-        }
+        [userQuery.data.id]: userQuery.data
       }));
     }
 
@@ -72,21 +69,20 @@ export const useServerPost = (postId: number, initialData?: any) => {
         return acc;
       }, {});
 
-      setEntities((prev) => ({
+      setComments((prev) => ({
         ...prev,
-        comments: { 
-          ...prev.comments,
-          ...normalizedComments
-        }
+        ...normalizedComments
       }));
     }
   }, [
     postId,
     post, 
     userQuery.data, 
-    commentsQuery.data, 
-    setEntities,
-    entities.posts
+    commentsQuery.data,
+    setPosts,
+    setUsers,
+    setComments,
+    posts
   ]);
 
   return {

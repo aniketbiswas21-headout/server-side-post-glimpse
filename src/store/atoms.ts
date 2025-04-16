@@ -1,10 +1,12 @@
 
 import { atom } from 'jotai';
-import { NormalizedEntities, initialNormalizedState } from '@/lib/normalization';
-import { PaginationState } from '@/types';
+import { EntityMap, initialNormalizedState } from '@/lib/normalization';
+import { PaginationState, Post, User, Comment } from '@/types';
 
-// Renamed from entitiesAtom to postAtom
-export const postAtom = atom<NormalizedEntities>(initialNormalizedState);
+// Individual entity atoms
+export const postsAtom = atom<EntityMap<Post>>(initialNormalizedState.posts);
+export const usersAtom = atom<EntityMap<User>>(initialNormalizedState.users);
+export const commentsAtom = atom<EntityMap<Comment>>(initialNormalizedState.comments);
 
 // Atom for pagination state
 export const paginationAtom = atom<PaginationState>({

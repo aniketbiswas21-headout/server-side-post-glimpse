@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import { postAtom } from '@/store/atoms';
+import { postsAtom, usersAtom, commentsAtom } from '@/store/atoms';
 import { 
   Card, 
   CardContent, 
@@ -19,16 +20,18 @@ import PostComment from '@/components/PostComment';
 const SinglePostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const postId = parseInt(id || '0', 10);
-  const entities = useAtomValue(postAtom);
+  const posts = useAtomValue(postsAtom);
+  const users = useAtomValue(usersAtom);
+  const allComments = useAtomValue(commentsAtom);
   
   // Get the post from our normalized state
-  const post = postId ? entities.posts[postId] : undefined;
+  const post = postId ? posts[postId] : undefined;
   
   // Get the user from our normalized state
-  const user = post?.userId ? entities.users[post.userId] : undefined;
+  const user = post?.userId ? users[post.userId] : undefined;
   
   // Get the comments for this post from our normalized state
-  const comments = Object.values(entities.comments)
+  const comments = Object.values(allComments)
     .filter(comment => comment.postId === postId);
 
   if (!postId || !post) {

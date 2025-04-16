@@ -1,8 +1,9 @@
+
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { fetchPosts } from '@/lib/api';
 import { normalizePosts } from '@/lib/normalization';
-import { postAtom, paginationAtom, postIdsAtom } from '@/store/atoms';
+import { postsAtom, paginationAtom, postIdsAtom } from '@/store/atoms';
 import { useEffect } from 'react';
 
 export const postsQueryKey = (page: number, limit: number) => 
@@ -10,7 +11,7 @@ export const postsQueryKey = (page: number, limit: number) =>
 
 export const useServerPosts = (initialData?: any) => {
   const [pagination, setPagination] = useAtom(paginationAtom);
-  const [entities, setEntities] = useAtom(postAtom);
+  const [posts, setPosts] = useAtom(postsAtom);
   const [postIds, setPostIds] = useAtom(postIdsAtom);
   const queryClient = useQueryClient();
 
@@ -26,14 +27,14 @@ export const useServerPosts = (initialData?: any) => {
       const normalizedPosts = normalizePosts(query.data);
       const ids = query.data.map((post: any) => post.id);
       
-      setEntities(prev => ({
+      setPosts(prev => ({
         ...prev,
-        posts: { ...prev.posts, ...normalizedPosts }
+        ...normalizedPosts
       }));
       
       setPostIds(ids);
     }
-  }, [query.data, setEntities, setPostIds]);
+  }, [query.data, setPosts, setPostIds]);
 
   const prefetchNextPage = async () => {
     const nextPage = pagination.page + 1;
