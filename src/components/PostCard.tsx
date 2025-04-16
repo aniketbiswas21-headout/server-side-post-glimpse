@@ -42,9 +42,12 @@ export const PostCard: React.FC<PostCardProps> = ({ postId }) => {
             <div className="h-6 w-32 bg-muted animate-pulse rounded" />
           )}
           
-          <div className="ml-auto">
+          <div className="ml-auto flex gap-2">
             <Button variant="ghost" size="sm" asChild>
-              <Link to={`/view-post/${post.id}`}>View from state</Link>
+              <Link to={`/post/${post.id}`}>View (API)</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to={`/view-post/${post.id}`}>View (Store)</Link>
             </Button>
           </div>
         </CardFooter>

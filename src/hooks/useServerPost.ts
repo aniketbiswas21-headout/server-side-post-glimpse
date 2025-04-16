@@ -2,7 +2,7 @@
 // Hook for server-side fetching of individual post
 import { useQuery } from '@tanstack/react-query';
 import { fetchPost, fetchPostComments, fetchUser } from '@/lib/api';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { entitiesAtom } from '@/store/atoms';
 import { useEffect } from 'react';
 
@@ -13,41 +13,47 @@ export const userQueryKey = (id: number) => ['user', id];
 
 export const useServerPost = (postId: number, initialData?: any) => {
   const [entities, setEntities] = useAtom(entitiesAtom);
+  
+  // Check if post already exists in our store
+  const existingPost = entities.posts[postId];
 
   // Query for fetching post
   const postQuery = useQuery({
     queryKey: postQueryKey(postId),
     queryFn: () => fetchPost(postId),
-    initialData: initialData?.post || (postId ? entities.posts[postId] : undefined),
-    enabled: !!postId,
+    initialData: initialData?.post || existingPost,
+    enabled: !!postId && !existingPost, // Only fetch if we don't have the post
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  // Get the post (either from query or existing store)
+  const post = postQuery.data || existingPost;
 
   // Query for fetching post comments
   const commentsQuery = useQuery({
     queryKey: postCommentsQueryKey(postId),
     queryFn: () => fetchPostComments(postId),
     initialData: initialData?.comments,
-    enabled: !!postId && !!postQuery.data,
+    enabled: !!postId && !!post,
   });
 
   // Query for fetching post author
   const userQuery = useQuery({
-    queryKey: userQueryKey(postQuery.data?.userId),
-    queryFn: () => fetchUser(postQuery.data?.userId),
+    queryKey: userQueryKey(post?.userId),
+    queryFn: () => fetchUser(post?.userId),
     initialData: initialData?.user || 
-      (postQuery.data?.userId ? entities.users[postQuery.data.userId] : undefined),
-    enabled: !!postQuery.data?.userId,
+      (post?.userId ? entities.users[post.userId] : undefined),
+    enabled: !!post?.userId && !entities.users[post.userId],
   });
 
   // Effect to update entities
   useEffect(() => {
-    if (postQuery.data) {
+    if (post && !entities.posts[postId]) {
       setEntities((prev) => ({
         ...prev,
         posts: { 
           ...prev.posts, 
-          [postId]: postQuery.data 
+          [postId]: post 
         }
       }));
     }
@@ -78,15 +84,16 @@ export const useServerPost = (postId: number, initialData?: any) => {
     }
   }, [
     postId,
-    postQuery.data, 
+    post, 
     userQuery.data, 
     commentsQuery.data, 
-    setEntities
+    setEntities,
+    entities.posts
   ]);
 
   return {
-    post: postQuery.data,
-    isLoading: postQuery.isLoading || userQuery.isLoading,
+    post,
+    isLoading: (!post && postQuery.isLoading) || userQuery.isLoading,
     isError: postQuery.isError || userQuery.isError,
     error: postQuery.error || userQuery.error,
     user: userQuery.data,
