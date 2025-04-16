@@ -1,4 +1,6 @@
-# Welcome to your Lovable project
+# Server-Side Posts App
+
+A modern web application that demonstrates server-side data fetching with React Query, Jotai for state management, and data normalization.
 
 ## Project info
 
@@ -57,6 +59,10 @@ This project is built with:
 - Vite
 - TypeScript
 - React
+- React Query (TanStack Query)
+- Jotai (State Management)
+- Data Normalization
+- Server-Side Data Fetching (simulation)
 - shadcn-ui
 - Tailwind CSS
 
