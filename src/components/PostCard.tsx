@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { entitiesAtom } from '@/store/atoms';
 import { Post, User } from '@/types';
 
@@ -40,6 +41,12 @@ export const PostCard: React.FC<PostCardProps> = ({ postId }) => {
           ) : (
             <div className="h-6 w-32 bg-muted animate-pulse rounded" />
           )}
+          
+          <div className="ml-auto">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to={`/view-post/${post.id}`}>View from state</Link>
+            </Button>
+          </div>
         </CardFooter>
       </Link>
     </Card>

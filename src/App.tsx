@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import AppLayout from "./components/layout/AppLayout";
 import Index from "./pages/Index";
 import PostPage from "./pages/PostPage";
+import SinglePostPage from "./pages/SinglePostPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -30,6 +32,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/post/:id" element={<PostPage />} />
+              <Route path="/view-post/:id" element={<SinglePostPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
